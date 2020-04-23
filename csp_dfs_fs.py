@@ -34,6 +34,21 @@ def check_constraint(i, c):
                 return ok
     return ok
 
+def get_removed_domain(i,c):
+    result = {}
+    for cons in list_constraint:
+        if cons[0] == list_node[i]:
+            other_node = cons[1]
+            if c in G.nodes[other_node]['domain']:
+                G.nodes[other_node]['domain'].remove(c)
+            result[other_node] = c
+        elif cons[1] == list_node[i]:
+            other_node = cons[0]
+            if c in G.nodes[other_node]['domain']:
+                G.nodes[other_node]['domain'].remove(c)
+            result[other_node] = c
+    return result
+
 
 def color_map(i):
     global no_bt
@@ -43,9 +58,13 @@ def color_map(i):
         G.nodes[list_node[i]]['color'] = c
         ok = check_constraint(i, c)
         if ok:
+            domain_remove = get_removed_domain(i,c)
             success = color_map(i+1)
             if success:
                 return success
+            for k,v in domain_remove.items():
+                if v not in G.nodes[k]['domain']:
+                    G.nodes[k]['domain'].append(v)
             no_bt +=1
         no_bt +=1
     return False
@@ -60,7 +79,7 @@ if __name__=='__main__':
     start_time = time.time()
     max_no_color = 10
     success_with_max_no_color = False
-    for no_color in range(1, max_no_color + 1):
+    for no_color in range(3, max_no_color + 1):
         list_color = [c for c in range(no_color)]
         import networkx as nx
         import matplotlib.pyplot as plt
@@ -77,8 +96,8 @@ if __name__=='__main__':
         success = check_map_color(G, list_color)
         if success:
             print("Success with X(G) = ", no_color, " and No of Backtrack = ", no_bt)
-            for n in G.nodes():
-                print(n, G.nodes[n]['color'])
+            # for n in G.nodes():
+            #     print(n, G.nodes[n]['color'])
             success_with_max_no_color = True
             break
         print()
