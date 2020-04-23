@@ -19,25 +19,49 @@ for line in lines:
             list_constraint.append((s,d))
 print(list_node, list_constraint)
 
-def check_constraint(i, c):
+def check_constraint(n, c):
     ok = True
     for cons in list_constraint:
-        if cons[0] == list_node[i]:
+        if cons[0] == n:
             other_node = cons[1]
             if G.nodes[other_node]['color'] == c:
                 ok = False
                 return ok
-        elif cons[1] == list_node[i]:
+        elif cons[1] == n:
             other_node = cons[0]
             if G.nodes[other_node]['color'] == c:
                 ok = False
                 return ok
     return ok
 
-def get_removed_domain(i,c):
+def get_next_with_heuristic():
+    node_not_visited = []
+    for n in G.nodes():
+        if G.nodes[n]['color'] == '':
+            remaining_value = len(G.nodes[n]['domain']) # For MRV
+            degree_heuristic = G.degree(n) # For Degree heuristic
+            e = (n, remaining_value, degree_heuristic)
+            node_not_visited.append(e)
+    node_not_visited.sort(key=lambda x: (x[1],-x[2])) # sorting based on priority of MRV > Degree heuristic
+    return node_not_visited[0][0] if len(node_not_visited) > 0 else None
+
+def get_color_with_heuristic(n):
+    lease_constraining_value = []
+    neighbors = list(G.neighbors(n))
+    for c in G.nodes[n]['domain']:
+        rules_out = 0
+        for node in list(G.neighbors(n)):
+            if G.nodes[node]['color'] == '' and c in G.nodes[node]['domain']:
+                rules_out+=1
+        e = (c, rules_out)
+        lease_constraining_value.append(e)
+    lease_constraining_value.sort(key=lambda x: x[1])
+    return [tup[0] for tup in lease_constraining_value]
+
+def get_removed_domain(n,c):
     result = {}
     for cons in list_constraint:
-        if cons[0] == list_node[i]:
+        if cons[0] == n:
             other_node = cons[1]
             if c in G.nodes[other_node]['domain']:
                 G.nodes[other_node]['domain'].remove(c)
@@ -54,7 +78,7 @@ def get_removed_domain(i,c):
                             result[k] = v
                         else:
                             result[k] = list(set(result[k]+v))
-        elif cons[1] == list_node[i]:
+        elif cons[1] == n:
             other_node = cons[0]
             if c in G.nodes[other_node]['domain']:
                 G.nodes[other_node]['domain'].remove(c)
@@ -73,16 +97,22 @@ def get_removed_domain(i,c):
                             result[k] = list(set(result[k]+v))
     return result
 
-def color_map(i):
+def color_map(i,n):
     global no_bt
     if i == len(G.nodes()):
         return True
-    for c in G.nodes[list_node[i]]['domain']:
-        G.nodes[list_node[i]]['color'] = c
-        ok = check_constraint(i, c)
+
+    # use heuristic LCV
+    sorted_color_domain = get_color_with_heuristic(n)
+    for c in sorted_color_domain:
+        G.nodes[n]['color'] = c
+        ok = check_constraint(n, c)
         if ok:
-            domain_remove = get_removed_domain(i,c)
-            success = color_map(i+1)
+            domain_remove = get_removed_domain(n,c)
+
+            # use heuristic MRV, Degree
+            next_n = get_next_with_heuristic()
+            success = color_map(i+1, next_n)
             if success:
                 return success
             for k,l in domain_remove.items():
@@ -96,7 +126,8 @@ def color_map(i):
 
 def check_map_color(G=None, list_color=[]):
     # list node, # list_constraint, # list_color
-    success = color_map(0)
+    import random
+    success = color_map(0, list_node[random.randint(0, len(list_node)-1)])
     return success
 
 if __name__=='__main__':

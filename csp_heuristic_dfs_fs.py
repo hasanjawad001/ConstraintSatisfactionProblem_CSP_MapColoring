@@ -54,7 +54,7 @@ def get_next_with_heuristic():
     for n in G.nodes():
         if G.nodes[n]['color'] == '':
             remaining_value = len(G.nodes[n]['domain']) # For MRV
-            degree_heuristic =  G.degree(n) # For Degree heuristic
+            degree_heuristic = G.degree(n) # For Degree heuristic
             e = (n, remaining_value, degree_heuristic)
             node_not_visited.append(e)
     node_not_visited.sort(key=lambda x: (x[1],-x[2])) # sorting based on priority of MRV > Degree heuristic
