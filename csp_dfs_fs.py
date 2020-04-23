@@ -1,6 +1,6 @@
 list_node = []
 list_constraint = []
-f = open("map_usa.txt", "r") # need to use "map_aus.txt" for australia or "map_usa.txt" for usa color mapping
+f = open("map_aus.txt", "r") # need to use "map_aus.txt" for australia or "map_usa.txt" for usa color mapping
 lines = f.readlines()
 import random
 random.shuffle(lines)
@@ -41,12 +41,12 @@ def get_removed_domain(i,c):
             other_node = cons[1]
             if c in G.nodes[other_node]['domain']:
                 G.nodes[other_node]['domain'].remove(c)
-            result[other_node] = c
+                result[other_node] = c
         elif cons[1] == list_node[i]:
             other_node = cons[0]
             if c in G.nodes[other_node]['domain']:
                 G.nodes[other_node]['domain'].remove(c)
-            result[other_node] = c
+                result[other_node] = c
     return result
 
 
@@ -77,7 +77,7 @@ def check_map_color(G=None, list_color=[]):
 if __name__=='__main__':
     import time, copy
     start_time = time.time()
-    max_no_color = 10
+    max_no_color = 4
     success_with_max_no_color = False
     for no_color in range(1, max_no_color + 1):
         list_color = [c for c in range(no_color)]

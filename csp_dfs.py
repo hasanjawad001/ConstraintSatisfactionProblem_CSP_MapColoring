@@ -1,6 +1,6 @@
 list_node = []
 list_constraint = []
-f = open("map_usa.txt", "r") # need to use "map_aus.txt" for australia or "map_usa.txt" for usa color mapping
+f = open("map_aus.txt", "r") # need to use "map_aus.txt" for australia or "map_usa.txt" for usa color mapping
 lines = f.readlines()
 import random
 random.shuffle(lines)
@@ -68,7 +68,7 @@ if __name__=='__main__':
         G = nx.Graph()
         G.add_nodes_from(list_node, color='')
         G.add_edges_from(list_constraint)
-        for n in G.nodes:
+        for n in G.nodes():
             G.nodes[n]['domain'] = copy.deepcopy(list_color)
 
         # for n in G.nodes():
