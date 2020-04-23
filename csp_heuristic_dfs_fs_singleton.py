@@ -20,6 +20,9 @@ for line in lines:
 print(list_node, list_constraint)
 
 def check_constraint(n, c):
+    """
+    This function is being used to check the binary constraint satisfaction for the assignment of n=c
+    """
     ok = True
     for cons in list_constraint:
         if cons[0] == n:
@@ -35,6 +38,9 @@ def check_constraint(n, c):
     return ok
 
 def get_next_with_heuristic():
+    """
+    This function is being used to get the best neighbor according to MRV and Degree heuristics
+    """
     node_not_visited = []
     for n in G.nodes():
         if G.nodes[n]['color'] == '':
@@ -46,6 +52,9 @@ def get_next_with_heuristic():
     return node_not_visited[0][0] if len(node_not_visited) > 0 else None
 
 def get_color_with_heuristic(n):
+    """
+    This function is being used to get best possible color value according to Least Constraining Value heuristic
+    """
     lease_constraining_value = []
     neighbors = list(G.neighbors(n))
     for c in G.nodes[n]['domain']:
@@ -59,6 +68,9 @@ def get_color_with_heuristic(n):
     return [tup[0] for tup in lease_constraining_value]
 
 def get_removed_domain(n,c):
+    """
+    This function is being used for elimination of domain values which are inconsistent to the assignment of n=c
+    """
     result = {}
     for cons in list_constraint:
         if cons[0] == n:
@@ -98,6 +110,9 @@ def get_removed_domain(n,c):
     return result
 
 def color_map(i,n):
+    """
+    This function recursively runs the algorithm until it reaches to a base case
+    """
     global no_bt
     if i == len(G.nodes()):
         return True
@@ -125,6 +140,9 @@ def color_map(i,n):
     return False
 
 def check_map_color(G=None, list_color=[]):
+    """
+    This is an outer function to find out whether mapcoloring for G with list_color is possible or not.
+    """
     # list node, # list_constraint, # list_color
     import random
     success = color_map(0, list_node[random.randint(0, len(list_node)-1)])
