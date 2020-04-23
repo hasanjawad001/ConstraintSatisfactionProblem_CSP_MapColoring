@@ -1,0 +1,7 @@
+NSW: [Q, SA, V]
+NT: [SA, Q, WA]
+Q: [NSW, NT, SA]
+T: []
+SA: [NSW, NT, Q, V, WA]
+V: [NSW, SA]
+WA: [NT, SA]
