@@ -77,7 +77,7 @@ def check_map_color(G=None, list_color=[]):
 if __name__=='__main__':
     import time, copy
     start_time = time.time()
-    max_no_color = 4
+    max_no_color = 10
     success_with_max_no_color = False
     for no_color in range(1, max_no_color + 1):
         list_color = [c for c in range(no_color)]
